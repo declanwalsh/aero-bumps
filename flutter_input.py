@@ -57,11 +57,13 @@ V_TO_MV = 1000
 
 
 def import_data_acc(analysis_files, idx_file):
+    """Imports and preprocesses accelereometer data"""
+
     acc_data = import_csv_acc(analysis_files[idx_file], cfg_analysis.DATA_FORMAT)
 
     # butterworth filter doesn't do much here
     # most daq's and accelerometers have inbuilt low pass filters
-    data_filter = acc_data[:, cfg.COL_SIGNAL]
+    # data_filter = acc_data[:, cfg.COL_SIGNAL]
     data_filter = acc_filter_butter(acc_data[:, cfg.COL_SIGNAL], cfg_analysis.FREQ_LOWPASS, 'lowpass')
     acc_data = np.c_[acc_data, data_filter]
 
@@ -69,7 +71,7 @@ def import_data_acc(analysis_files, idx_file):
         print("\nData overview sample: ")
         print(acc_data)
 
-        check_timestep(acc_data[:, cfg.COL_TIME])
+        _check_timestep(acc_data[:, cfg.COL_TIME])
 
     if cfg.CHECK_STAT:
         stationary_check(acc_data[:, cfg.COL_SIGNAL],
@@ -115,6 +117,7 @@ def import_data_atmos(analysis_files, idx_file):
 
     return atmos_data
 
+
 # ---------------------------------
 # FUNCTIONS - CSV IMPORT
 # ---------------------------------
@@ -135,9 +138,9 @@ def import_csv_acc(filename, data_format):
         # extract columns from csv
         sample_conv = acc_data_cleaned[:, cfg_analysis.COL_IDX_MEASURE].astype(int)
         time_basis = acc_data_cleaned[:, cfg_analysis.COL_TIME_MEASURE]
-        time_format = identify_time_format(time_basis[1])
+        time_format = _identify_time_format(time_basis[1])
         # convert time from string to float
-        time_conv = convert_times(time_basis, time_format)
+        time_conv = _convert_times(time_basis, time_format)
         voltage_conv = acc_data_cleaned[:, cfg_analysis.COL_SIGNAL_MEASURE].astype(float)
 
         # remove the DC bias offset
@@ -173,6 +176,7 @@ def import_csv_acc(filename, data_format):
 def import_csv_atmos(filename, data_format):
 
     if data_format == 0:
+        # endveco data has no atmospheric data
         atmos_data_conv = None
 
     # Slam Stick or Endaq data
@@ -199,7 +203,12 @@ def import_csv_atmos(filename, data_format):
     return atmos_data_conv
 
 
-def convert_times(data, time_format):
+# ---------------------------------
+# FUNCTIONS - MISC
+# ---------------------------------
+
+
+def _convert_times(data, time_format):
     """converts string of times to float of seconds since time started"""
 
     if time_format is None:
@@ -226,7 +235,7 @@ def convert_times(data, time_format):
 # ---------------------------------
 
 
-def check_config_file():
+def _check_config_file():
 
     no_errors = True
 
@@ -263,7 +272,7 @@ def check_config_file():
         sys.exit()
 
 
-def check_timestep(time):
+def _check_timestep(time):
     """Checks the timesteps between adjacent elements in a vector of times"""
     print("\nChecking timesteps...")
 
@@ -279,7 +288,7 @@ def check_timestep(time):
     print("NOTE: FFT assumes equal timesteps between all points. Differences may introduce errors.")
 
 
-def identify_time_format(str_sample_time):
+def _identify_time_format(str_sample_time):
     """Checks which format the time string in the csv is in and returns time format"""
 
     time_format = None
@@ -298,6 +307,6 @@ def identify_time_format(str_sample_time):
                 print("SUCCESS - valid time format found")
                 print(f"Regex of {regex_pattern_string}")
 
-    print(f"Time format is {time_format} (Regex of {regex_pattern_string})")
+        print(f"Time format is {time_format} (Regex of {regex_pattern_string})")
 
     return time_format
