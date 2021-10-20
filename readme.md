@@ -19,5 +19,10 @@ To use the program:
 1. Run flutter_main.py
 1. Results are shown in the console and saved in /Images and /Results folders
 
+# Libraries
+```
+source ~/venv/venv_aerobumps/activate/bin
+```
+
 # Issues
 In case of bugs, ask Declan.
