@@ -9,9 +9,14 @@ import matplotlib as plt
 import numpy as np
 import scipy.signal as signal
 import sys
+import os
 
 import flutter_config as cfg
 from flutter_config import cfg_analysis
+
+# ---------------------------------
+# FUNCTIONS - FILTERS
+# ---------------------------------
 
 
 def acc_filter_butter(data, freq, filter_type):
@@ -138,3 +143,37 @@ def plot_autocorr_variation_with_time(lag, data_corr):
     plt.title('Autocorrelation Variation over Time')
     ax.legend()
     plt.show()
+
+# ---------------------------------
+# FUNCTIONS - DIRECTORIES
+# ---------------------------------
+
+
+def make_default_directories():
+    """
+    Makes all the standard required directories for the analysis to save files in
+    """
+
+    directories = [cfg.CSV_FILE_ROOT, cfg.IMAGE_FILE_ROOT,
+                   cfg.OUTPUT_FILE_ROOT, cfg.FILTERED_IMAGE_FILE_ROOT]
+
+    for directory in directories:
+        make_directory(directory)
+
+    return 1
+
+
+def make_directory(directory):
+    """
+    Makes local directories relative to current
+    """
+
+    dirname = os.path.dirname(__file__)
+    path = os.path.join(dirname, directory, cfg_analysis.PROJECT_FOLDER_ROOT, cfg_analysis.ANALYSIS_FILE_ROOT)
+    mode = 774
+    try:
+        os.makedirs(path, mode)
+    except OSError as error:
+        print(error)
+
+    return 1

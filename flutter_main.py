@@ -3,7 +3,7 @@
 
 TODO
 - Signal is very weak, it should be more distinct on a log scale
-- Pod accelerometer data (not slam sticks) have too similar main frequencies (possible processing artifact or measurement issue)
+- Endveco accelerometers  have too similar main frequencies (possible processing artifact or measurement issue)
 - May need to correct for the accelerometer mounting having damping, etc.
 """
 
@@ -16,6 +16,7 @@ from flutter_config import cfg_analysis
 from flutter_input import import_data_acc, import_data_atmos, check_config_file
 from flutter_analysis import analyse_data_acc
 from flutter_output import compare_data_acc, save_csv_output
+from flutter_other import make_default_directories
 
 
 def main_program():
@@ -27,8 +28,13 @@ def main_program():
 
     analysis_files_atmos = cfg_analysis.CSV_FILE_ATMOS
 
+    print("Creating directories...")
+    make_default_directories()
+    print("Directories created.")
+
+    """
     print(f"Running on {analysis_files_atmos[0]}...")
-    atmos = import_data_atmos(analysis_files, 0)
+    atmos = import_data_atmos(analysis_files_atmos, 0)
 
     out_data = [["Source"], ["Test"], ["Frequencies"], ["Damping"], ["Damping Frequencies (Ref.)"]]
 
@@ -68,7 +74,7 @@ def main_program():
     compare_data_acc(results)
 
     save_csv_output(out_data, cfg_analysis.ACC_BASIS_STR)
-
+    """
 
 if __name__ == "__main__":
     main_program()
