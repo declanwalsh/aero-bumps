@@ -235,7 +235,7 @@ def _convert_times(data, time_format):
 # ---------------------------------
 
 
-def _check_config_file():
+def check_config_file():
 
     no_errors = True
 
