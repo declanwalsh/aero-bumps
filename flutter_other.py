@@ -174,6 +174,7 @@ def make_directory(directory):
     try:
         os.makedirs(path, mode)
     except OSError as error:
-        print(error)
+        if error.args[0] != 17:
+            print(error)
 
     return 1
